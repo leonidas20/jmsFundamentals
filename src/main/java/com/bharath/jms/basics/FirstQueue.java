@@ -3,6 +3,8 @@ package com.bharath.jms.basics;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
@@ -27,7 +29,13 @@ public class FirstQueue {
 			MessageProducer producer = session.createProducer(queue);
 			TextMessage message = session.createTextMessage("I am the creator of my destiny");
 			producer.send(message);
+			System.out.println("Message sent: "+ message.getText()) ;
 			
+			//Readeing the message for the same queue we put it
+			MessageConsumer consumer = session.createConsumer(queue);
+			connection.start();
+			TextMessage messageReceived = (TextMessage) consumer.receive(5000);
+			System.out.println("Message Received: " +messageReceived.getText());
 			
 		} catch (NamingException e) {
 			e.printStackTrace();
