@@ -17,13 +17,14 @@ public class FirstQueue {
 	public static void main(String[] args) {
 
 		InitialContext initialContext = null;
+		Connection connection = null;
 		
 		try {
 			initialContext = new InitialContext();
 			ConnectionFactory cf = (ConnectionFactory) initialContext.lookup("ConnectionFactory");
-			Connection connection = cf.createConnection();
+			connection = cf.createConnection();
 			Session session = connection.createSession();
-			Queue queue = (Queue) initialContext.lookup("queue/myQueue=");
+			Queue queue = (Queue) initialContext.lookup("queue/myQueue");
 				
 			session.createProducer(queue);
 			MessageProducer producer = session.createProducer(queue);
@@ -42,6 +43,21 @@ public class FirstQueue {
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if (initialContext!=null) {
+				try {
+					initialContext.close();
+				} catch (NamingException e) {
+					e.printStackTrace();
+				}
+			}
+			if (connection!=null) {
+				try {
+					connection.close();
+				} catch (JMSException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 	}
