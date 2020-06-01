@@ -18,17 +18,20 @@ public class MessageExpirationDemo {
 		
 		InitialContext context = new InitialContext();
 		Queue queue = (Queue) context.lookup("queue/myQueue");
+		Queue expiryQueue = (Queue) context.lookup("queue/expiryQueue");
 		
 		try(ActiveMQConnectionFactory cf = new ActiveMQConnectionFactory(); 
 			JMSContext jmsContext = cf.createContext()) {
 				
 			JMSProducer producer = jmsContext.createProducer();
-			//producer.setTimeToLive(2000);
+			producer.setTimeToLive(2000);
 			producer.send(queue, "Arise Awake and stop not till the goal is reached");
 			Thread.sleep(5000);
 			
-			Message messageReceived = jmsContext.createConsumer(queue).receive(2000);
+			Message messageReceived = jmsContext.createConsumer(queue).receive(5000);
 			System.out.println(messageReceived);
+			
+			System.out.println(jmsContext.createConsumer(expiryQueue).receiveBody(String.class));
 		}
 	}
 }
