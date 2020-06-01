@@ -12,7 +12,7 @@ public class JMSContextDemo {
 	
 /*
  * Demostration of the JMS 2.0.
- * Using the JMS Context instead 
+ * Using the JMS Context instead of creating a connection and session
  */
 	
 	
