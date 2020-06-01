@@ -2,8 +2,10 @@ package com.bharath.jms.messagestructure;
 
 import javax.jms.JMSConsumer;
 import javax.jms.JMSContext;
+import javax.jms.JMSException;
 import javax.jms.JMSProducer;
 import javax.jms.Queue;
+import javax.jms.TextMessage;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -13,7 +15,7 @@ public class RequestReplyDemo {
 	
 	private static Object lookup;
 
-	public static void main(String[] args) throws NamingException {
+	public static void main(String[] args) throws NamingException, JMSException {
 		
 		InitialContext context = new InitialContext();
 		Queue queue = (Queue) context.lookup("queue/requestQueue");
@@ -23,14 +25,16 @@ public class RequestReplyDemo {
 			JMSContext jmsContext = cf.createContext()) {
 				
 			JMSProducer producer = jmsContext.createProducer();
-			producer.send(queue, "Arise Awake and stop not till the goal is reached");
+			TextMessage message = jmsContext.createTextMessage("Arise Awake and stop not till the goal is reached");
+			message.setJMSReplyTo(replyQueue);
+			producer.send(queue, message );
 			
 			JMSConsumer consumer = jmsContext.createConsumer(queue);
-			String messageReceived = consumer.receiveBody(String.class);
-			System.out.println(messageReceived);
+			TextMessage messageReceived = (TextMessage) consumer.receive();
+			System.out.println(messageReceived.getText());
 			
 			JMSProducer replyProducer = jmsContext.createProducer();
-			replyProducer.send(replyQueue, "You are awesome");
+			replyProducer.send(messageReceived.getJMSReplyTo(), "You are awesome");
 			
 			JMSConsumer replyConsumer = jmsContext.createConsumer(replyQueue);
 			System.out.println(replyConsumer.receiveBody(String.class));
