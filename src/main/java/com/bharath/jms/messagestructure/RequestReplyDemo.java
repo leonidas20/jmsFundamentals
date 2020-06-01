@@ -5,6 +5,7 @@ import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.JMSProducer;
 import javax.jms.Queue;
+import javax.jms.TemporaryQueue;
 import javax.jms.TextMessage;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -19,12 +20,13 @@ public class RequestReplyDemo {
 		
 		InitialContext context = new InitialContext();
 		Queue queue = (Queue) context.lookup("queue/requestQueue");
-		Queue replyQueue = (Queue) context.lookup("queue/replyQueue");
+		//Queue replyQueue = (Queue) context.lookup("queue/replyQueue");
 		
 		try(ActiveMQConnectionFactory cf = new ActiveMQConnectionFactory(); 
 			JMSContext jmsContext = cf.createContext()) {
 				
 			JMSProducer producer = jmsContext.createProducer();
+			TemporaryQueue replyQueue = jmsContext.createTemporaryQueue();
 			TextMessage message = jmsContext.createTextMessage("Arise Awake and stop not till the goal is reached");
 			message.setJMSReplyTo(replyQueue);
 			producer.send(queue, message );
