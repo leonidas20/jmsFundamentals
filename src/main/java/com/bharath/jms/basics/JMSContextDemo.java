@@ -8,7 +8,15 @@ import javax.naming.NamingException;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
 public class JMSContextDemo {
-
+	
+	
+/*
+ * Demostration of the JMS 2.0.
+ * Using the JMS Context instead 
+ */
+	
+	
+	
 	private static Object lookup;
 
 	public static void main(String[] args) throws NamingException {
